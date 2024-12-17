@@ -9,7 +9,7 @@ pipeline {
     stages {
         stage('Checkout') {
             steps{
-                git branch: 'main', url ''
+                git branch: 'main', 'https://github.com/anilgosavi/my-aws-node-app.git'
             }
 
         }
