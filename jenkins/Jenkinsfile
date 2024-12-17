@@ -1,0 +1,48 @@
+pipeline {
+    agent any
+    environment {
+        AWS_REGION = 'us-east-1'
+        AWS_ACCESS_KEY_ID = credentials('aws-access-key-id')
+        AWS_SECRET_ACCESS_KEY = credentials('aws-secret-access-key')
+    }
+
+    stages {
+        stage('Checkout') {
+            steps{
+                git branch: 'main', url ''
+            }
+
+        }
+        stage('Build') {
+            steps{
+                script{
+                    sh 'docker build -t my-node-app .'
+                }
+            }
+        }
+        stage('Run tests'){
+            steps{
+                script{
+                    sh 'docker run --rm my-node-app npm test'
+                }
+            }
+
+        }
+        stage('Deploy to Aws'){
+            steps{
+                script{
+                    sh 'terraform init'
+                    sh 'terraform apply -auto-approve'
+                }
+            }
+
+        }    
+    }
+    post{
+        always{
+            cleanWs()
+        }
+    }
+}
+
+    
